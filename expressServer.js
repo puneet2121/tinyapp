@@ -1,35 +1,52 @@
+//REQUIREMENTS 
 const express = require('express');
-const app = express();
-const port = 8080;
-
 const bodyParser = require('body-parser');
 
-app.use(bodyParser.urlencoded({entended: true}));
+const generateRandomString = function() {
+  let ranString = ''
+  let char = 'ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst0123456789'
+  let charLength = char.length
+  for(let i = 0; i <= 6; i++) {
+    ranString += char.charAt(Math.floor(Math.random() * charLength));
+   }
+   return ranString;
+};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+//SETUP AND MIDDLEWARES
+const app = express();
+const port = 8080;
 app.set('view engine','ejs');
-app.get('/urls',(req,res) => {
-  const templeVars = {urls: urlDatabase};
-  res.render('urls_index',templeVars);
+
+app.use(bodyParser.urlencoded({entended: true}));
+
+// ROUTES / ENDPOINTS
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = 'http://www.lighthouselabs.ca';
+  res.redirect(longURL);
 });
 
-//get http://localhost:8080/urls/b2xVn2
-//get http://localhost:8080/urls/9sm5xK
+app.get('/urls',(req,res) => {
+  const templateVars = {
+    urls: urlDatabase
+  };
+  res.render('urls_index',templateVars);
+});
 
 app.get('/urls/new',(req,res) => {
   res.render('urls_new');
 });
 
-app.get('/urls/:myshortURL',(req,res) => {
-  const templeVars = {
-    shortURL: req.params.myshortURL,
-    longURL:urlDatabase[req.params.myshortURL]
+app.get('/urls/:shortURL',(req,res) => {
+  const templateVars = {
+    shortURL: req.params.shortURL,
+    longURL:urlDatabase[req.params.shortURL]
   };
-  res.render('urls_show',templeVars);
+  res.render('urls_show',templateVars);
 })
 
 
@@ -37,22 +54,17 @@ app.get('/hello',(req,res) => {
   const templateVars = {greeting: 'Hello World'};
   res.render('hello_world',templateVars)
 });
+
 app.post('/urls',(req,res) => {
   console.log(req.body);
+  const longURL = req.body.longURL;
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL;
+  console.log(urlDatabase)
   res.send('ok');
 });
-function generateRandomString() {
-  let ranString = ''
-  let char = 'ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst0123456789'
-  let charLength = char.length
-  for(let i = 0; i <= 6; i++){
-    ranString += char.charAt(Math.floor(Math.random() * 
- charLength));
-   }
-   return ranString;
-}
-generateRandomString();
- 
+
+ // LISTENER / 
 app.listen(port,() =>{
   console.log(`server is listening to port ${port}`)
 });
