@@ -43,10 +43,10 @@ app.post('/urls',(req,res) => {
 });
 function generateRandomString() {
   let ranString = ''
-  let char = 'ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst$%&*0123456789'
+  let char = 'ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst0123456789'
   let charLength = char.length
   for(let i = 0; i <= 6; i++){
-    ranString += characters.charAt(Math.floor(Math.random() * 
+    ranString += char.charAt(Math.floor(Math.random() * 
  charLength));
    }
    return ranString;
