@@ -30,6 +30,14 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL2 = urlDatabase[shortURL]
   res.redirect(longURL2);
 });
+app.post('/urls/:shortURL/delete',(req,res) => {
+  const shortURL = req.params.shortURL
+  console.log(shortURL)
+  //const longURL = urlDatabase[shortURL]
+  delete urlDatabase[shortURL];
+  res.redirect('/urls')
+  
+});
 
 app.get('/urls',(req,res) => {
   const templateVars = {
