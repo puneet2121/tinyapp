@@ -25,10 +25,6 @@ app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({entended: true}));
 
 // ROUTES / ENDPOINTS
-app.get("/u/:shortURL", (req, res) => {
-  const longURL = 'http://www.lighthouselabs.ca';
-  res.redirect(longURL);
-});
 
 app.get('/urls',(req,res) => {
   const templateVars = {
@@ -61,7 +57,7 @@ app.post('/urls',(req,res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
   console.log(urlDatabase)
-  res.send('ok');
+  res.redirect(`/urls/${shortURL}`)
 });
 
  // LISTENER / 
