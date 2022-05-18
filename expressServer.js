@@ -1,6 +1,7 @@
 //REQUIREMENTS 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser')
 
 const generateRandomString = function() {
   let ranString = ''
@@ -23,6 +24,7 @@ const port = 8080;
 app.set('view engine','ejs');
 
 app.use(bodyParser.urlencoded({entended: true}));
+app.use(cookieParser());
 
 // ROUTES / ENDPOINTS
 app.get("/u/:shortURL", (req, res) => {
@@ -38,22 +40,50 @@ app.post('/urls/:shortURL/delete',(req,res) => {
   res.redirect('/urls')
   
 });
+<<<<<<< Updated upstream
+=======
+app.post('/login',(req,res) => {
+  console.log(req.body)
+  res.cookie('username',req.body.username);
+  res.redirect('/urls')
+});
+
+app.post('/logout',(req,res) => {
+  res.clearCookie('username')
+  res.redirect('/urls')
+});
+
+app.post('/urls/:id',(req,res) => {
+  const shortURL = req.params.id
+  const longURL = req.body.longURL
+  console.log(shortURL)
+  //const longURL = urlDatabase[shortURL]
+  urlDatabase[shortURL] = longURL
+  res.redirect('/urls')
+})
+>>>>>>> Stashed changes
 
 app.get('/urls',(req,res) => {
   const templateVars = {
-    urls: urlDatabase
+    urls: urlDatabase,
+    username: req.cookies["username"]
   };
   res.render('urls_index',templateVars);
 });
 
 app.get('/urls/new',(req,res) => {
-  res.render('urls_new');
+  const templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"]
+  };
+  res.render('urls_new',templateVars);
 });
 
 app.get('/urls/:shortURL',(req,res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL:urlDatabase[req.params.shortURL]
+    longURL:urlDatabase[req.params.shortURL],
+    username: req.cookies["username"]
   };
   res.render('urls_show',templateVars);
 })
@@ -71,6 +101,10 @@ app.post('/urls',(req,res) => {
   urlDatabase[shortURL] = longURL;
   console.log(urlDatabase)
   res.redirect(`/urls/${shortURL}`)
+});
+
+app.get('*',(req,res) => {
+  res.render('404');
 });
 
  // LISTENER / 

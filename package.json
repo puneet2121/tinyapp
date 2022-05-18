@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/nodemon -L expressServer.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +17,14 @@
   "bugs": {
     "url": "https://github.com/puneet2121/tinyapp/issues"
   },
-  "homepage": "https://github.com/puneet2121/tinyapp#readme"
+  "homepage": "https://github.com/puneet2121/tinyapp#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
 }
