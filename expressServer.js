@@ -25,6 +25,11 @@ app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({entended: true}));
 
 // ROUTES / ENDPOINTS
+app.get("/u/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL
+  const longURL2 = urlDatabase[shortURL]
+  res.redirect(longURL2);
+});
 
 app.get('/urls',(req,res) => {
   const templateVars = {
