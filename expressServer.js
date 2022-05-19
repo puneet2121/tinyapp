@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser')
 const generateRandomString = function() {
   let ranString = ''
   let char = 'ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst0123456789'
-  let charLength = char.length
+  let charLength = char.length;
   for(let i = 0; i <= 6; i++) {
     ranString += char.charAt(Math.floor(Math.random() * charLength));
    }
@@ -45,12 +45,12 @@ app.get("/register", (req, res) => {
   res.render('registerform');
 });
 app.post("/register",(req,res) => {
-  let id = generateRandomString();
+  let user_id = generateRandomString();
   let user = { id:generateRandomString(), 
     email:req.body.email, 
     password: req.body.password}
-  res.cookie(id,req.body.email)
-  users[id] = user
+  res.cookie(user_id,req.body.email)
+  users[user_id] = user
   console.log(users)
   res.redirect('/urls')
 });
