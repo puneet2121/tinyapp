@@ -13,6 +13,13 @@ const generateRandomString = function() {
    return ranString;
 };
 
+const getUserByEmail = function(email,userDatabase){
+  for(const user in userDatabase){
+    if(userDatabase[user].email === email)
+      return user;
+  }
+}
+
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -31,7 +38,6 @@ const users = {
     password: "dishwasher-funk"
   }
 }
-let user_id = generateRandomString();
 
 //SETUP AND MIDDLEWARES
 const app = express();
@@ -47,13 +53,22 @@ app.get("/register", (req, res) => {
   console.log('hello')
   res.render('registerform');
 });
+
 app.post("/register",(req,res) => {
-  
+  let email = req.body.email;
+  let password = req.body.password;
+  let user_id = generateRandomString();
   let user = { id:user_id, 
-    email:req.body.email, 
-    password: req.body.password}
+    email, 
+    password}
+  if(!email || !password){
+    return res.status(400).send('Email and password can not be empty');
+  }
+  if(getUserByEmail(email,users)){
+    return res.status(400).send('Email already exist');
+  }
+  users[user_id] = user;
   res.cookie('user_id',user.id)
-  users[user_id] = user
   console.log(users)
   res.redirect('/urls')
 });
@@ -73,8 +88,10 @@ app.post('/urls/:shortURL/delete',(req,res) => {
 });
 
 app.post('/login',(req,res) => {
-  console.log(req.body)
-  res.cookie('user_id',user_id);
+  console.log('req body',req.body.username)
+  const email = req.body.username;
+  const user = getUserByEmail(email,users);
+  res.cookie('user_id111',user);
   res.redirect('/urls')
 });
 
@@ -99,7 +116,6 @@ app.get('/urls',(req,res) => {
     urls: urlDatabase,
     user_id: req.cookies["user_id"]
   };
-  console.log('template',templateVars)
   res.render('urls_index',templateVars);
   
 });
