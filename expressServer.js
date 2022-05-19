@@ -1,7 +1,7 @@
 //REQUIREMENTS 
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const cookieParser = require('cookie-parser')
 
 const generateRandomString = function() {
   let ranString = ''
@@ -18,18 +18,41 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
 //SETUP AND MIDDLEWARES
 const app = express();
 const port = 8080;
 app.set('view engine','ejs');
 
 app.use(bodyParser.urlencoded({entended: true}));
-
+app.use(cookieParser());
 
 // ROUTES / ENDPOINTS
+
 app.get("/register", (req, res) => {
   console.log('hello')
   res.render('registerform');
+});
+app.post("/register",(req,res) => {
+  let id = generateRandomString();
+  let user = { id:generateRandomString(), 
+    email:req.body.email, 
+    password: req.body.password}
+  res.cookie(id,req.body.email)
+  users[id] = user
+  console.log(users)
+  res.redirect('/urls')
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -46,6 +69,16 @@ app.post('/urls/:shortURL/delete',(req,res) => {
   
 });
 
+app.post('/login',(req,res) => {
+  console.log(req.body)
+  res.cookie('username',req.body.username);
+  res.redirect('/urls')
+});
+
+app.post('/logout',(req,res) => {
+  res.clearCookie('username')
+  res.redirect('/urls')
+});
 
 app.post('/urls/:id',(req,res) => {
   const shortURL = req.params.id
@@ -60,7 +93,7 @@ app.post('/urls/:id',(req,res) => {
 app.get('/urls',(req,res) => {
   const templateVars = {
     urls: urlDatabase,
-    
+    username: req.cookies["username"]
   };
   res.render('urls_index',templateVars);
 });
@@ -68,7 +101,7 @@ app.get('/urls',(req,res) => {
 app.get('/urls/new',(req,res) => {
   const templateVars = {
     urls: urlDatabase,
-    
+    username: req.cookies["username"]
   };
   res.render('urls_new',templateVars);
 });
@@ -77,6 +110,7 @@ app.get('/urls/:shortURL',(req,res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL:urlDatabase[req.params.shortURL],
+    username: req.cookies["username"]
   };
   res.render('urls_show',templateVars);
 })
@@ -99,7 +133,6 @@ app.post('/urls',(req,res) => {
 app.get('*',(req,res) => {
   res.render('404');
 });
-
 
  // LISTENER / 
 app.listen(port,() =>{
