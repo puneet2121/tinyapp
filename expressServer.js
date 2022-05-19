@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+
 const generateRandomString = function() {
   let ranString = ''
   let char = 'ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst0123456789'
@@ -24,7 +25,13 @@ app.set('view engine','ejs');
 
 app.use(bodyParser.urlencoded({entended: true}));
 
+
 // ROUTES / ENDPOINTS
+app.get("/register", (req, res) => {
+  console.log('hello')
+  res.render('registerform');
+});
+
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL
   const longURL2 = urlDatabase[shortURL]
@@ -38,6 +45,8 @@ app.post('/urls/:shortURL/delete',(req,res) => {
   res.redirect('/urls')
   
 });
+
+
 app.post('/urls/:id',(req,res) => {
   const shortURL = req.params.id
   const longURL = req.body.longURL
@@ -47,21 +56,27 @@ app.post('/urls/:id',(req,res) => {
   res.redirect('/urls')
 })
 
+
 app.get('/urls',(req,res) => {
   const templateVars = {
-    urls: urlDatabase
+    urls: urlDatabase,
+    
   };
   res.render('urls_index',templateVars);
 });
 
 app.get('/urls/new',(req,res) => {
-  res.render('urls_new');
+  const templateVars = {
+    urls: urlDatabase,
+    
+  };
+  res.render('urls_new',templateVars);
 });
 
 app.get('/urls/:shortURL',(req,res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL:urlDatabase[req.params.shortURL]
+    longURL:urlDatabase[req.params.shortURL],
   };
   res.render('urls_show',templateVars);
 })
@@ -80,6 +95,11 @@ app.post('/urls',(req,res) => {
   console.log(urlDatabase)
   res.redirect(`/urls/${shortURL}`)
 });
+
+app.get('*',(req,res) => {
+  res.render('404');
+});
+
 
  // LISTENER / 
 app.listen(port,() =>{
