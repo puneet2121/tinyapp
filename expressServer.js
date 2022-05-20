@@ -50,8 +50,12 @@ app.use(cookieParser());
 // ROUTES / ENDPOINTS
 
 app.get("/register", (req, res) => {
+
   console.log('hello')
-  res.render('registerform');
+  const templateVars = {
+    user_id: req.cookies["user_id"]
+  };
+  res.render('registerform',templateVars);
 });
 
 app.post("/register",(req,res) => {
@@ -87,13 +91,24 @@ app.post('/urls/:shortURL/delete',(req,res) => {
   
 });
 app.get('/login',(req,res) => {
-  res.render('login')
+  const templateVars = {
+    user_id: req.cookies["user_id"]
+  };
+  res.render('login',templateVars)
 });
 
 app.post('/login',(req,res) => {
-  console.log('req body',req.body.username)
-  const email = req.body.username;
+  console.log('req body',req.body.email)
+  const email = req.body.email;
+  const password = req.body.password;
   const user = getUserByEmail(email,users);
+  if(!user) {
+    return res.status(403).send('Email does not exist');
+  } if(user) {
+      if(users[user].password !== password) {
+        return res.status(403).send('Password and Email does not match'); 
+      }
+  }
   res.cookie('user_id',user);
   res.redirect('/urls')
 });
