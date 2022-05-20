@@ -52,7 +52,10 @@ app.use(cookieParser());
 app.get("/register", (req, res) => {
 
   console.log('hello')
+  const user_id = req.cookies["user_id"]
+  const email = users[user_id]
   const templateVars = {
+    email,
     user_id: req.cookies["user_id"]
   };
   res.render('registerform',templateVars);
@@ -91,7 +94,10 @@ app.post('/urls/:shortURL/delete',(req,res) => {
   
 });
 app.get('/login',(req,res) => {
+  const user_id = req.cookies["user_id"]
+  const email = users[user_id]
   const templateVars = {
+    email,
     user_id: req.cookies["user_id"]
   };
   res.render('login',templateVars)
@@ -129,7 +135,10 @@ app.post('/urls/:id',(req,res) => {
 
 
 app.get('/urls',(req,res) => {
+  const user_id = req.cookies["user_id"]
+  const email = users[user_id] ? users[user_id].email : ''
   const templateVars = {
+    email,
     users,
     urls: urlDatabase,
     user_id: req.cookies["user_id"]
@@ -139,17 +148,26 @@ app.get('/urls',(req,res) => {
 });
 
 app.get('/urls/new',(req,res) => {
+  const user_id = req.cookies["user_id"]
+  const email = users[user_id] ? users[user_id].email : ''
   const templateVars = {
     users,
+    email,
     urls: urlDatabase,
     user_id: req.cookies["user_id"]
   };
+  if(!user_id) {
+    return res.redirect('/urls');
+  }
   res.render('urls_new',templateVars);
 });
 
 app.get('/urls/:shortURL',(req,res) => {
+  const user_id = req.cookies["user_id"]
+  const email = users[user_id] ? users[user_id].email : ''
   const templateVars = {
     users,
+    email,
     shortURL: req.params.shortURL,
     longURL:urlDatabase[req.params.shortURL],
     user_id: req.cookies["user_id"]
@@ -172,9 +190,6 @@ app.post('/urls',(req,res) => {
   res.redirect(`/urls/${shortURL}`)
 });
 
-app.get('*',(req,res) => {
-  res.render('404');
-});
 
  // LISTENER / 
 app.listen(port,() =>{
