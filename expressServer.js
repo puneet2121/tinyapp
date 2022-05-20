@@ -13,7 +13,7 @@ const generateRandomString = function() {
    return ranString;
 };
 
-const getUserByEmail = function(email,userDatabase){
+const getUserByEmail = function(email,userDatabase) {
   for(const user in userDatabase){
     if(userDatabase[user].email === email)
       return user;
@@ -86,12 +86,15 @@ app.post('/urls/:shortURL/delete',(req,res) => {
   res.redirect('/urls')
   
 });
+app.get('/login',(req,res) => {
+  res.render('login')
+});
 
 app.post('/login',(req,res) => {
   console.log('req body',req.body.username)
   const email = req.body.username;
   const user = getUserByEmail(email,users);
-  res.cookie('user_id111',user);
+  res.cookie('user_id',user);
   res.redirect('/urls')
 });
 
