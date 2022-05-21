@@ -42,7 +42,7 @@ const users = {
     password: "dishwasher-funk"
   }
 }
-let user_id = generateRandomString();
+
 //SETUP AND MIDDLEWARES
 const app = express();
 const port = 8080;
@@ -67,6 +67,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register",(req,res) => {
   let email = req.body.email;
+  let user_id = generateRandomString();
   let password = req.body.password;
   let user = { id:user_id, 
     email, 
@@ -84,7 +85,7 @@ app.post("/register",(req,res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL
+  const shortURL = req.params.shortURL;
   if(!urlDatabase[shortURL]){
     return res.status(403).send('This shortId does not exist');
   }
@@ -134,6 +135,7 @@ app.post('/logout',(req,res) => {
 app.post('/urls/:id',(req,res) => {
   const shortURL = req.params.id
   const longURL = req.body.longURL
+  const user_id = req.cookies.user_id
   console.log(shortURL)
   let user = {
     longURL,
@@ -148,12 +150,22 @@ app.post('/urls/:id',(req,res) => {
 app.get('/urls',(req,res) => {
   const user_id = req.cookies["user_id"]
   const email = users[user_id] ? users[user_id].email : ''
+  let users_urls = {};
+  for(let url in urlDatabase){
+    console.log("urlspage",url)
+    if(urlDatabase[url].user_id === user_id){
+      console.log("urlsdata",urlDatabase[url].user_id)
+      console.log('cookie id of user',user_id)
+      users_urls[url] = urlDatabase[url];
+    }
+  }
   const templateVars = {
     email,
     users,
-    urls: urlDatabase,
-    user_id: req.cookies["user_id"]
+    users_urls,
+    user_id
   };
+  console.log('uers_urls',templateVars.users_urls)
   res.render('urls_index',templateVars);
   
 });
@@ -176,13 +188,23 @@ app.get('/urls/new',(req,res) => {
 app.get('/urls/:shortURL',(req,res) => {
   const user_id = req.cookies["user_id"]
   const email = users[user_id] ? users[user_id].email : ''
+  if(!urlDatabase[req.params.shortURL]) {
+    res.status(404).render('404');
+    return;
+  };
+  const url = urlDatabase[req.params.shortURL];
+  if(url.user_id !== user_id){
+    res.status(401).render('401');
+    return;
+  }
   const templateVars = {
     users,
     email,
     shortURL: req.params.shortURL,
-    longURL:urlDatabase[req.params.shortURL].longURL,
+    longURL:url.longURL,
     user_id: req.cookies["user_id"]
   };
+
   res.render('urls_show',templateVars);
 })
 
@@ -195,6 +217,7 @@ app.get('/hello',(req,res) => {
 app.post('/urls',(req,res) => {
   console.log(req.body.longURL);
   let longURL = req.body.longURL;
+  const user_id = req.cookies.user_id
   let shortURL = generateRandomString();
   let user = {
     longURL,
@@ -204,7 +227,9 @@ app.post('/urls',(req,res) => {
   console.log(urlDatabase)
   res.redirect(`/urls/${shortURL}`)
 });
-
+app.get('*',(req,res)=> {
+  res.render('404')
+})
 
 
 
