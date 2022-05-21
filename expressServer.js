@@ -2,7 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
- 
+const bcrypt = require('bcryptjs');
+
 const generateRandomString = function() {
   let ranString = ''
   let char = 'ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst0123456789'
@@ -42,6 +43,9 @@ const users = {
     password: "dishwasher-funk"
   }
 }
+// const password = "purple-monkey-r"; 
+// const hashedPassword = bcrypt.hashSync(password, 10);
+// console.log({hashedPassword});
 
 //SETUP AND MIDDLEWARES
 const app = express();
@@ -69,9 +73,10 @@ app.post("/register",(req,res) => {
   let email = req.body.email;
   let user_id = generateRandomString();
   let password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   let user = { id:user_id, 
     email, 
-    password}
+    hashedPassword}
   if(!email || !password){
     return res.status(400).send('Email and password can not be empty');
   }
@@ -116,10 +121,11 @@ app.post('/login',(req,res) => {
   const email = req.body.email;
   const password = req.body.password;
   const user = getUserByEmail(email,users);
+  //console.log(users[user].password)
   if(!user) {
     return res.status(403).send('Email does not exist');
   } if(user) {
-      if(users[user].password !== password) {
+      if(!(bcrypt.compareSync(password,users[user].hashedPassword))) {
         return res.status(403).send('Password and Email does not match'); 
       }
   }
