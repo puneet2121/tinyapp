@@ -217,11 +217,9 @@ app.post('/urls',(req,res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-
 app.get('*',(req,res)=> {
   res.render('404');
 });
-
 
 // LISTENER /
 app.listen(port,() =>{
