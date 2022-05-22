@@ -55,6 +55,10 @@ app.use(cookieSession({
 
 // ROUTES / ENDPOINTS
 
+app.get('/',(req,res) => {
+  res.redirect('/urls');
+});
+
 app.get("/register", (req, res) => {
   const userId = req.session["userId"];
   const email = users[userId];
@@ -212,12 +216,15 @@ app.post('/urls',(req,res) => {
   console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
+
+
 app.get('*',(req,res)=> {
   res.render('404');
 });
 
+
 // LISTENER /
 app.listen(port,() =>{
   console.log(`server is listening to port ${port}`);
-  console.log(urlDatabase)
+  console.log(urlDatabase);
 });
