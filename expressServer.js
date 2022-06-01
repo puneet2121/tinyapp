@@ -1,7 +1,7 @@
 //REQUIREMENTS
 const express = require('express');
 const bodyParser = require('body-parser');
-let cookieSession = require('cookie-session');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const {getUserByEmail} = require('./helpers');
 const {generateRandomString} = require('./helpers');
@@ -60,11 +60,11 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register",(req,res) => {
-  let email = req.body.email;
-  let userId = generateRandomString();
-  let password = req.body.password;
+  const email = req.body.email;
+  const userId = generateRandomString();
+  const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
-  let user = { id:userId,
+  const user = { id:userId,
     email,
     hashedPassword};
   if (!email || !password) {
@@ -128,7 +128,7 @@ app.post('/urls/:id',(req,res) => {
   const shortURL = req.params.id;
   const longURL = req.body.longURL;
   const userId = req.session.userId;
-  let user = {
+  const user = {
     longURL,
     userId,
   };
@@ -195,10 +195,10 @@ app.get('/urls/:shortURL',(req,res) => {
 });
 
 app.post('/urls',(req,res) => {
-  let longURL = req.body.longURL;
+  const longURL = req.body.longURL;
   const userId = req.session.userId;
-  let shortURL = generateRandomString();
-  let user = {
+  const shortURL = generateRandomString();
+  const user = {
     longURL,
     userId,
   };
