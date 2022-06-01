@@ -3,18 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 let cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
-const getUserByEmail = require('./helpers');
-
-const generateRandomString = function() {
-  let ranString = '';
-  let char = 'ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst0123456789';
-  let charLength = char.length;
-  for (let i = 0; i <= 6; i++) {
-    ranString += char.charAt(Math.floor(Math.random() * charLength));
-  }
-  return ranString;
-};
-
+const {getUserByEmail} = require('./helpers');
+const {generateRandomString} = require('./helpers');
 
 const urlDatabase = {
   b6UTxQ: {
