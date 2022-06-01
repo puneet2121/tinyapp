@@ -85,8 +85,7 @@ app.get("/u/:shortURL", (req, res) => {
     return res.status(403).send('This shortId does not exist');
   }
   const longURL2 = urlDatabase[shortURL];
-
-  res.redirect(longURL2);
+  res.redirect(longURL2.longURL);
 });
 app.post('/urls/:shortURL/delete',(req,res) => {
   const shortURL = req.params.shortURL;
